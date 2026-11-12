@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Generador académico de investigación para Administración UNASAM, con autores metodológicos, ejemplos y temas visuales.">
+  <title>Generador Académico de Investigación | UNASAM</title>
+  <style>
+    :root {
+      --navy: #102b4e;
+      --blue: #174f88;
+      --blue-2: #246eae;
+      --pale: #eaf2fa;
+      --ink: #1d2938;
+      --muted: #667487;
+      --line: #dce4ed;
+      --bg: #f3f6fa;
+      --white: #ffffff;
+      --success: #18794e;
+      --danger: #b42318;
+      --shadow: 0 12px 34px rgba(16, 43, 78, .08);
+      --radius: 16px;
+      --hero-bg: linear-gradient(120deg, #102b4e 0%, #174f88 65%, #246eae 100%);
+    }
+    body[data-theme="claro"] {
+      --navy: #253b59; --blue: #416b9b; --blue-2: #6d91b8; --pale: #edf3fa;
+      --ink: #263445; --muted: #69798d; --line: #e0e7ef; --bg: #f8fafc;
+      --white: #ffffff; --hero-bg: linear-gradient(120deg, #e7eef7 0%, #dce8f5 65%, #cbdced 100%);
+    }
+    body[data-theme="oscuro"] {
+      --navy: #9dc7f4; --blue: #8bbcf0; --blue-2: #68a6e5; --pale: #203752;
+      --ink: #e7eef8; --muted: #a8b7ca; --line: #34475f; --bg: #101a29;
+      --white: #18263a; --hero-bg: linear-gradient(120deg, #0a1422 0%, #142c49 65%, #1b416b 100%);
+      --shadow: 0 12px 34px rgba(0, 0, 0, .22);
+    }
+    body[data-theme="verde"] {
+      --navy: #174c42; --blue: #236b5d; --blue-2: #3d927e; --pale: #e5f4ef;
+      --ink: #203b35; --muted: #637b74; --line: #d4e7df; --bg: #f1f7f4;
+      --white: #ffffff; --hero-bg: linear-gradient(120deg, #123b34 0%, #1c6657 65%, #32917b 100%);
+    }
+    * { box-sizing: border-box; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+    }
+    .hero {
+      background: var(--hero-bg);
+      color: white;
+      padding: 42px 22px 50px;
+    }
+    .hero-inner, main { width: min(1100px, calc(100% - 36px)); margin: 0 auto; }
+    .hero-inner { position: relative; }
+    .hero-tools { display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-bottom:20px; }
+    .hero-tools label { color: inherit; margin:0; font-size:.82rem; }
+    .hero-tools select { width:auto; min-width:150px; min-height:38px; padding:7px 34px 7px 10px; border-color:rgba(255,255,255,.35); background:rgba(255,255,255,.12); color:inherit; }
+    .hero-tools select option { color:#1d2938; background:#fff; }
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 999px;
+      color: #e6f1ff;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 14px 0 8px; font-size: clamp(1.8rem, 4vw, 2.65rem); line-height: 1.15; }
+    .hero p { max-width: 760px; margin: 0; color: #e4edf7; }
+    main { padding: 28px 0 60px; }
+    .step-heading { display: flex; align-items: center; gap: 12px; margin: 30px 0 16px; }
+    .step-number {
+      display: grid; place-items: center; flex: 0 0 34px; height: 34px;
+      border-radius: 10px; background: var(--navy); color: white; font-weight: 800;
+    }
+    h2 { margin: 0; color: var(--navy); font-size: 1.35rem; }
+    .section-intro { margin: -8px 0 16px 46px; color: var(--muted); font-size: .94rem; }
+    .card {
+      background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 22px; box-shadow: var(--shadow); margin-bottom: 16px;
+    }
+    .variables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .variable-card { border-top: 4px solid var(--blue-2); }
+    .variable-card h3 { margin: 0 0 15px; color: var(--navy); font-size: 1.08rem; }
+    .field { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; color: var(--ink); font-size: .9rem; font-weight: 700; }
+    input, select {
+      width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #cbd5e1;
+      border-radius: 9px; background: var(--white); color: var(--ink); font: inherit; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--blue-2); box-shadow: 0 0 0 3px rgba(36,110,174,.13); }
+    .dimension-list { display: grid; gap: 9px; }
+    .dimension-row { display: flex; align-items: center; gap: 8px; }
+    .dimension-row input { flex: 1; }
+    .remove-dimension {
+      flex: 0 0 40px; width: 40px; height: 42px; border: 1px solid #f1c7c4;
+      border-radius: 9px; background: #fff7f6; color: var(--danger); cursor: pointer;
+      font-size: 1.2rem; font-weight: 700;
+    }
+    .small-button, .primary-button, .secondary-button, .copy-button {
+      border: 0; border-radius: 9px; cursor: pointer; font: inherit; font-weight: 700;
+      transition: transform .12s ease, background .12s ease;
+    }
+    button:active { transform: translateY(1px); }
+    .small-button {
+      margin-top: 11px; padding: 9px 13px; background: var(--pale); color: var(--blue);
+      font-size: .88rem;
+    }
+    .small-button:hover { background: #dceafa; }
+    .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 16px; }
+    .hint { margin: 5px 0 0; color: var(--muted); font-size: .82rem; }
+    .actions {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 20px 0 8px;
+    }
+    .primary-button { padding: 13px 20px; background: var(--navy); color: white; }
+    .primary-button:hover { background: var(--blue); }
+    .secondary-button { padding: 12px 17px; background: white; color: var(--navy); border: 1px solid #cbd5e1; }
+    .secondary-button:hover { background: #f8fafc; }
+    .notice {
+      border: 1px solid #cbdcf0; border-left: 4px solid var(--blue-2); border-radius: 10px;
+      background: #f4f8fd; padding: 12px 14px; color: #40536b; font-size: .88rem;
+    }
+    .error-box {
+      display: none; margin: 14px 0; padding: 12px 14px; border-radius: 9px;
+      background: #fff1f0; border: 1px solid #f3c2be; color: #912018;
+    }
+    #results { display: none; }
+    .results-top {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .result-card { margin-bottom: 13px; padding: 18px 20px; }
+    .result-card h3 {
+      margin: 0 0 10px; color: var(--blue); font-size: .98rem; text-transform: uppercase;
+      letter-spacing: .035em;
+    }
+    .result-text { margin: 0; white-space: pre-wrap; }
+    .result-list { margin: 0; padding-left: 22px; }
+    .result-list li { padding: 3px 0 7px 3px; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .copy-button {
+      padding: 7px 10px; background: #edf3f9; color: var(--blue); font-size: .8rem;
+      white-space: nowrap;
+    }
+    .copy-button:hover { background: #dceafa; }
+    .hypothesis-note { color: var(--muted); font-style: italic; margin: 0; }
+    .footer { text-align: center; color: #718096; font-size: .82rem; padding: 20px; }
+    .toast {
+      position: fixed; right: 20px; bottom: 20px; z-index: 20; display: none;
+      background: #173d63; color: white; padding: 11px 16px; border-radius: 10px;
+      box-shadow: var(--shadow); font-size: .9rem;
+    }
+
+
+    body[data-theme="claro"] .hero { color:#1d3552; }
+    body[data-theme="claro"] .hero p { color:#405873; }
+    body[data-theme="claro"] .hero .eyebrow { color:#294563; border-color:rgba(41,69,99,.28); }
+    body[data-theme="claro"] .hero-tools select { color:#1d3552; border-color:rgba(41,69,99,.25); background:rgba(255,255,255,.72); }
+    body[data-theme="oscuro"] .secondary-button { background:var(--white); color:var(--ink); border-color:var(--line); }
+    body[data-theme="oscuro"] .small-button, body[data-theme="oscuro"] .copy-button { background:var(--pale); color:var(--blue); }
+    body[data-theme="oscuro"] .notice { background:#1d3048; border-color:#395575; color:#d2dfef; }
+    body[data-theme="oscuro"] .remove-dimension { background:#3a2428; border-color:#75464d; color:#ffb7b0; }
+    body[data-theme="oscuro"] .error-box { background:#3b2225; border-color:#75464d; color:#ffc7c2; }
+    /* Animaciones discretas para una experiencia académica profesional */
+    .hero { position:relative; overflow:hidden; isolation:isolate; }
+    .hero::before {
+      content:""; position:absolute; width:360px; height:360px; right:-90px; top:-170px;
+      border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.18), transparent 68%);
+      z-index:-1; animation: ambientFloat 9s ease-in-out infinite alternate;
+    }
+    .eyebrow { animation: fadeDown .65s ease both; }
+    .hero h1 { animation: fadeUp .75s .08s ease both; }
+    .hero p { animation: fadeUp .75s .18s ease both; }
+    .step-heading { animation: fadeUp .5s ease both; }
+    .step-number { box-shadow:0 5px 16px rgba(16,43,78,.16); transition:transform .25s ease, box-shadow .25s ease; }
+    .step-heading:hover .step-number { transform:translateY(-2px) rotate(-3deg); box-shadow:0 8px 20px rgba(16,43,78,.22); }
+    .card { transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; animation:fadeUp .55s ease both; }
+    .card:hover { transform:translateY(-3px); box-shadow:0 16px 38px rgba(16,43,78,.12); border-color:var(--blue-2); }
+    input, select { transition:border-color .2s ease, box-shadow .2s ease, background .25s ease; }
+    button { transition:transform .2s ease, box-shadow .2s ease, background .2s ease, filter .2s ease; }
+    button:hover { transform:translateY(-2px); filter:brightness(1.03); }
+    button:active { transform:translateY(0) scale(.985); }
+    .primary-button:hover { box-shadow:0 8px 20px rgba(16,43,78,.18); }
+    .result-card { animation:resultReveal .48s cubic-bezier(.2,.75,.25,1) both; }
+    .dimension-row { animation:fadeUp .25s ease both; }
+    .toast { animation:toastIn .28s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes resultReveal { from { opacity:0; transform:translateY(18px) scale(.99); } to { opacity:1; transform:translateY(0) scale(1); } }
+    @keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes ambientFloat { from { transform:translate3d(0,0,0) scale(1); } to { transform:translate3d(-25px,28px,0) scale(1.12); } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
+    }
+    @media (max-width: 760px) {
+      .variables-grid, .details-grid { grid-template-columns: 1fr; }
+      .hero { padding: 28px 18px 38px; }
+      .hero-tools { justify-content:flex-start; margin-bottom:18px; }
+      .card { padding: 17px; }
+      .section-intro { margin-left: 0; }
+      .results-top { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body data-theme="azul">
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-tools">
+        <label for="themeSwitcher">Tema visual</label>
+        <select id="themeSwitcher" aria-label="Cambiar tema visual">
+          <option value="azul">Azul institucional</option>
+          <option value="claro">Claro</option>
+          <option value="oscuro">Oscuro</option>
+          <option value="verde">Verde elegante</option>
+        </select>
+      </div>
+      <span class="eyebrow">Escuela Profesional de Administración · UNASAM</span>
+      <h1>Generador Académico de Investigación</h1>
+      <p>Organiza tus variables, dimensiones y datos del estudio para construir una propuesta inicial de título, objetivos, preguntas e hipótesis con correspondencia metodológica.</p>
+    </div>
+  </header>
+
+  <main>
+    <form id="researchForm" novalidate>
+      <div class="step-heading">
+        <span class="step-number">1</span><h2>Datos de investigación</h2>
+      </div>
+      <p class="section-intro">Ingresa la información tal como deseas que aparezca en la formulación académica.</p>
+
+      <section class="card" aria-labelledby="methodHeading">
+        <h3 id="methodHeading" style="margin-top:0;color:var(--navy)">Autor de referencia metodológica</h3>
+        <label for="methodAuthor">Selecciona el autor antes de completar las variables</label>
+        <select id="methodAuthor">
+          <option value="sampieri">Roberto Hernández Sampieri — con Fernández Collado y Baptista Lucio (2014)</option>
+          <option value="vara">Arístides Vara Horna (2012)</option>
+          <option value="villanueva">Luis Augusto Villanueva Benites</option>
+        </select>
+        <p id="methodSummary" class="notice" style="margin-top:14px" aria-live="polite"></p>
+        <p id="methodReference" class="hint"></p>
+        <a id="methodSource" target="_blank" rel="noopener noreferrer">Consultar obra de referencia</a>
+        <p id="methodSourceNote" class="hint" hidden></p>
+        <p class="hint">Adaptación didáctica para estudios de dos variables. Las plantillas de redacción son del programa; no son fórmulas oficiales de los autores ni acreditan aprobación de la UNASAM. El selector adapta la clasificación y el sustento. Las dimensiones deben fundamentarse con autores de cada variable.</p>
+      </section>
+
+      <div class="notice" style="margin-bottom:18px">
+        <strong>24 ejemplos de investigación en Administración</strong>
+        <p style="margin:5px 0 10px">Elige un área y un tema; luego pulsa el botón para completar todos los campos. Puedes editar cualquier dato. Cargar un ejemplo reemplaza los campos y borra los resultados anteriores.</p>
+        <div class="details-grid">
+          <div class="field"><label for="exampleArea">Área de Administración</label><select id="exampleArea"></select></div>
+          <div class="field"><label for="exampleTopic">Tema de ejemplo</label><select id="exampleTopic"></select></div>
+        </div>
+        <button type="button" id="fillExampleButton" class="secondary-button">Completar todos los campos con este ejemplo</button>
+        <p class="hint">Ejemplos didácticos con organizaciones ficticias. Las dimensiones son orientativas y deben sustentarse con teoría. Se propone un alcance correlacional; la dirección de la relación es una hipótesis por contrastar.</p>
+      </div>
+
+      <div class="variables-grid">
+        <section class="card variable-card">
+          <h3>Primera variable</h3>
+          <div class="field">
+            <label for="variable1">Nombre de la variable 1 *</label>
+            <input id="variable1" type="text" placeholder="Ej. Gestión del talento humano" required>
+          </div>
+          <label>Dimensiones de la variable 1 *</label>
+          <div id="dimensions1" class="dimension-list"></div>
+          <button class="small-button" type="button" data-add="1">＋ Agregar dimensión</button>
+        </section>
+
+        <section class="card variable-card">
+          <h3>Segunda variable</h3>
+          <div class="field">
+            <label for="variable2">Nombre de la variable 2 *</label>
+            <input id="variable2" type="text" placeholder="Ej. Desempeño laboral" required>
+          </div>
+          <label>Dimensiones de la variable 2 *</label>
+          <div id="dimensions2" class="dimension-list"></div>
+          <button class="small-button" type="button" data-add="2">＋ Agregar dimensión</button>
+        </section>
+      </div>
+
+      <section class="card">
+        <h3 style="margin:0 0 17px;color:var(--navy)">Información complementaria</h3>
+        <div class="details-grid">
+          <div class="field">
+            <label for="population">Población de estudio *</label>
+            <input id="population" type="text" placeholder="Ej. trabajadores administrativos" required>
+          </div>
+          <div class="field">
+            <label for="institution">Institución u organización *</label>
+            <input id="institution" type="text" placeholder="Ej. Municipalidad Provincial de Huaraz" required>
+          </div>
+          <div class="field">
+            <label for="place">Lugar *</label>
+            <input id="place" type="text" placeholder="Ej. Huaraz, Áncash" required>
+          </div>
+          <div class="field">
+            <label for="year">Año de investigación *</label>
+            <input id="year" type="number" min="2000" max="2100" step="1" placeholder="2026" required>
+          </div>
+          <div class="field">
+            <label for="scope">Alcance de investigación *</label>
+            <select id="scope" required>
+              <option value="correlacional">Correlacional</option>
+              <option value="descriptivo">Descriptivo</option>
+              <option value="explicativo">Explicativo</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="relation">Tipo de relación que se desea estudiar</label>
+            <select id="relation">
+              <option value="no_direccional">Relación sin dirección predeterminada</option>
+              <option value="positiva">Relación positiva o directa</option>
+              <option value="negativa">Relación negativa o inversa</option>
+            </select>
+            <p class="hint" id="relationHint">En estudios correlacionales, esta opción define la dirección esperada de la asociación.</p>
+          </div>
+        </div>
+        <div class="notice" id="scopeNotice">
+          <strong>Nota metodológica:</strong> el alcance correlacional permite estudiar asociación entre variables, pero por sí solo no demuestra causalidad.
+        </div>
+      </section>
+
+      <div class="step-heading">
+        <span class="step-number">2</span><h2>Generación de investigación</h2>
+      </div>
+      <p class="section-intro">El sistema utilizará únicamente las variables, dimensiones y datos que hayas ingresado.</p>
+      <div id="errors" class="error-box" role="alert"></div>
+      <div class="actions">
+        <button type="submit" class="primary-button">✦ GENERAR INVESTIGACIÓN</button>
+        <button type="button" id="resetButton" class="secondary-button">Limpiar formulario</button>
+      </div>
+    </form>
+
+    <section id="results" aria-live="polite">
+      <div class="step-heading">
+        <span class="step-number">3</span><h2>Resultados de la investigación</h2>
+      </div>
+      <div class="results-top">
+        <p class="hint" style="margin:0">Revisa y ajusta la formulación con tu asesor antes de incorporarla a tu proyecto.</p>
+        <div class="actions" style="margin:0">
+          <button type="button" id="copyAll" class="secondary-button">Copiar todos</button>
+          <button type="button" id="downloadWord" class="primary-button">Descargar Word (.docx)</button>
+        </div>
+      </div>
+      <div id="resultContent"></div>
+      <div class="notice" style="margin-top:15px">
+        <strong>Importante:</strong> este generador ofrece una formulación preliminar basada en reglas generales de metodología. No sustituye la revisión del diseño, la matriz de consistencia ni las directivas vigentes de la UNASAM. En estudios descriptivos no se proponen hipótesis por defecto; en estudios explicativos debe verificarse que el diseño permita sustentar inferencias causales.
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Generador Académico de Investigación · Herramienta de apoyo para fines formativos</div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <!-- Dependencia externa para crear un archivo DOCX válido en el navegador. Requiere conexión a internet. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    "use strict";
+
+    const $ = (selector) => document.querySelector(selector);
+    const state = { generated: null };
+
+    function applyTheme(theme, persist = true) {
+      const allowed = ["azul", "claro", "oscuro", "verde"];
+      const selected = allowed.includes(theme) ? theme : "azul";
+      document.body.dataset.theme = selected;
+      $("#themeSwitcher").value = selected;
+      if (persist) {
+        try { localStorage.setItem("unasam-research-theme", selected); } catch (_) {}
+      }
+    }
+
+    function initializeTheme() {
+      let saved = "azul";
+      try { saved = localStorage.getItem("unasam-research-theme") || "azul"; } catch (_) {}
+      applyTheme(saved, false);
+      $("#themeSwitcher").addEventListener("change", event => applyTheme(event.target.value));
+    }
+
+    function addDimension(variableNumber, value = "") {
+      const container = $("#dimensions" + variableNumber);
+      const row = document.createElement("div");
+      row.className = "dimension-row";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "dimension-input";
+      input.placeholder = "Nombre de la dimensión";
+      input.value = value;
+      input.setAttribute("aria-label", "Dimensión de variable " + variableNumber);
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "remove-dimension";
+      remove.textContent = "×";
+      remove.title = "Eliminar dimensión";
+      remove.setAttribute("aria-label", "Eliminar dimensión");
+      remove.addEventListener("click", () => {
+        if (container.querySelectorAll(".dimension-row").length <= 1) {
+          showToast("Cada variable debe conservar al menos una dimensión.");
+          return;
+        }
+        row.remove();
+      });
+
+      row.append(input, remove);
+      container.appendChild(row);
+    }
+
+    function readDimensions(number) {
+      return [...$("#dimensions" + number).querySelectorAll("input")]
+        .map(input => input.value.trim()).filter(Boolean);
+    }
+
+    const methodologicalAuthors = {
+      sampieri: {
+        name: "Roberto Hernández Sampieri",
+        reference: "Hernández Sampieri, R., Fernández Collado, C., & Baptista Lucio, P. (2014). Metodología de la investigación (6.ª ed.). McGraw-Hill Education.",
+        url: "https://esup.edu.pe/wp-content/uploads/2020/12/2.%20Hernandez%2C%20Fernandez%20y%20Baptista-Metodolog%C3%ADa%20Investigacion%20Cientifica%206ta%20ed.pdf",
+        summary: "Referencia: capítulos 5 y 6. Distingue alcances exploratorio, descriptivo, correlacional y explicativo. Este formulario trabaja con los tres últimos. Las hipótesis dependen del alcance; en estudios descriptivos se plantean cuando se pronostica un dato o valor, opción que este generador no desarrolla.",
+        labels: { descriptivo: "Descriptivo", correlacional: "Correlacional", explicativo: "Explicativo" }
+      },
+      vara: {
+        name: "Arístides Vara Horna",
+        reference: "Vara-Horna, A. (2012). Desde la idea hasta la sustentación: 7 pasos para una tesis exitosa. Un método efectivo para las ciencias empresariales. Universidad de San Martín de Porres.",
+        url: "https://www.administracion.usmp.edu.pe/investigacion/files/7-PASOS-PARA-UNA-TESIS-EXITOSA-Desde-la-idea-inicial-hasta-la-sustentaci%C3%B3n.pdf",
+        summary: "Referencia: apartado 4.1.2, tabla 58, p. 203. Clasifica los diseños generales en exploratorios, descriptivos y explicativos. Ubica el descriptivo-correlacional dentro de los descriptivos. Este formulario permite describir, relacionar o formular una explicación; no desarrolla el diseño exploratorio.",
+        labels: { descriptivo: "Descriptivo simple", correlacional: "Descriptivo-correlacional", explicativo: "Explicativo" }
+      },
+      villanueva: {
+        name: "Luis Augusto Villanueva Benites",
+        reference: "Villanueva Benites, L. A. (s. f.). Diseño del proyecto e informe de investigación: una aplicación a las ciencias empresariales. Facultad de Administración y Turismo, Universidad Nacional Santiago Antúnez de Mayolo. (El PDF proporcionado no indica año de publicación).",
+        url: "",
+        summary: "Basado en el PDF proporcionado. La obra está orientada a las ciencias empresariales y a la carrera de Administración. Para el título, recomienda identificar las variables, su relación, los sujetos o contexto, el lugar y el tiempo (pp. 11–12). Los objetivos deben redactarse con verbos en infinitivo, ser claros, evaluables y congruentes; cada problema debe corresponder a un objetivo (pp. 55–56). Distingue estudios exploratorios, descriptivos, correlacionales y explicativos; define el correlacional como asociación no causal y el explicativo como búsqueda de relaciones causa-efecto (pp. 60–63). También desarrolla diseños experimentales y no experimentales, transversales y longitudinales (pp. 64–68).",
+        labels: { descriptivo: "Descriptivo", correlacional: "Correlacional", explicativo: "Explicativo" }
+      }
+    };
+
+    function methodologicalSupport(data) {
+      const author = methodologicalAuthors[data.author];
+      const purposes = {
+        descriptivo: data.author === "villanueva"
+          ? "Villanueva describe el estudio descriptivo como aquel que mide o evalúa aspectos, dimensiones o componentes de un fenómeno sin orientarse a explicar relaciones entre variables. Señala que, cuando se establecen hipótesis en estudios descriptivos, estas también son descriptivas. Este generador no las formula automáticamente; si tu estudio pronostica un valor o plantea una hipótesis descriptiva, debes incorporarla y justificarla."
+          : "Se propone caracterizar las variables. La formulación de hipótesis debe decidirse de acuerdo con el propósito específico del estudio y el marco metodológico seleccionado.",
+        correlacional: data.author === "villanueva"
+          ? "Villanueva caracteriza el estudio correlacional como aquel que mide el nivel de relación o asociación no causal entre variables. Una relación positiva supone que valores altos de una variable se asocian con valores altos de la otra; una negativa, que valores altos de una se asocian con valores bajos de la otra (pp. 62–63)."
+          : "Se propone examinar la asociación entre las variables. La hipótesis expresa una relación esperada, todavía no demostrada; una correlación no prueba causalidad.",
+        explicativo: data.author === "villanueva"
+          ? "Villanueva señala que el estudio explicativo busca el porqué de los hechos mediante relaciones causa-efecto (pp. 62–63). El uso de lenguaje causal exige un diseño y evidencia que permitan sustentar esa interpretación; una asociación por sí sola no demuestra causalidad."
+          : "Se propone estudiar una posible influencia. La redacción no demuestra causalidad: debe justificarse un diseño capaz de evaluar el efecto y controlar explicaciones alternativas."
+      };
+      const pages = data.author === "villanueva"
+        ? "\nPáginas consultadas del PDF: título (pp. 11–12); objetivos (pp. 55–58); tipos de investigación (pp. 60–63); diseños de investigación (pp. 64–68); hipótesis y variables (pp. 39–51)."
+        : "";
+      return "Autor de referencia: " + author.name + "\nClasificación: " + author.labels[data.scope] +
+        "\n\n" + author.summary + "\n\nAplicación a esta propuesta: " + purposes[data.scope] +
+        pages + "\n\nReferencia bibliográfica: " + author.reference +
+        (author.url ? "\nFuente: " + author.url : "\nFuente: documento PDF proporcionado por el usuario.") +
+        "\n\nAdaptación didáctica del programa; no es una cita textual ni una validación institucional.";
+    }
+
+    function updateMethodology() {
+      const author = methodologicalAuthors[$("#methodAuthor").value];
+      document.querySelector('label[for="scope"]').textContent =
+        $("#methodAuthor").value === "vara" ? "Diseño según la clasificación de Vara Horna *" : "Alcance / tipo de estudio *";
+      [...$("#scope").options].forEach(option => { option.textContent = author.labels[option.value]; });
+      $("#methodSummary").textContent = author.summary;
+      $("#methodReference").textContent = author.reference;
+      if (author.url) {
+        $("#methodSource").href = author.url;
+        $("#methodSource").hidden = false;
+        $("#methodSourceNote").hidden = true;
+      } else {
+        $("#methodSource").removeAttribute("href");
+        $("#methodSource").hidden = true;
+        $("#methodSourceNote").textContent = "Fuente: PDF de Luis Augusto Villanueva Benites adjuntado para esta actualización. El ejemplar no muestra año de publicación.";
+        $("#methodSourceNote").hidden = false;
+      }
+    }
+
+    function setScopeHelp() {
+      updateMethodology();
+      const scope = $("#scope").value;
+      const relation = $("#relation");
+      const hint = $("#relationHint");
+      const notice = $("#scopeNotice");
+
+      if (scope === "descriptivo") {
+        relation.disabled = true;
+        hint.textContent = "No aplica: el alcance descriptivo no plantea una relación entre variables.";
+        notice.innerHTML = "<strong>Nota metodológica:</strong> el alcance descriptivo se centra en caracterizar las variables. Por ello, el sistema no formulará hipótesis ni afirmará una relación entre ellas.";
+      } else if (scope === "correlacional") {
+        relation.disabled = false;
+        hint.textContent = "Define si se espera una asociación positiva, negativa o sin dirección predeterminada.";
+        notice.innerHTML = "<strong>Nota metodológica:</strong> el alcance correlacional estudia asociación entre variables; no demuestra por sí solo que una variable cause cambios en la otra.";
+      } else {
+        relation.disabled = false;
+        hint.textContent = "Indica la dirección esperada del efecto. Debe justificarse con teoría y diseño.";
+        notice.innerHTML = "<strong>Nota metodológica:</strong> el alcance explicativo plantea influencia o efecto. Verifica que el diseño, temporalidad y control de variables permitan sostener una interpretación causal.";
+      }
+    }
+
+    function clean(value) {
+      return value.replace(/\s+/g, " ").trim();
+    }
+
+    function contextText(data) {
+      return " en " + data.population + " de " + data.institution + ", " + data.place + ", " + data.year;
+    }
+
+    function relationWords(kind, scope) {
+      if (kind === "positiva") return scope === "explicativo" ? "positivamente" : "positiva y significativa";
+      if (kind === "negativa") return scope === "explicativo" ? "negativamente" : "negativa y significativa";
+      return scope === "explicativo" ? "significativamente" : "estadísticamente significativa";
+    }
+
+    function specificPairs(data) {
+      const pairs = [];
+      data.dimensions1.forEach(d => pairs.push({
+        label: d + " de " + data.variable1,
+        left: d + " de " + data.variable1,
+        right: data.variable2,
+        kind: "v1"
+      }));
+      data.dimensions2.forEach(d => pairs.push({
+        label: d + " de " + data.variable2,
+        left: data.variable1,
+        right: d + " de " + data.variable2,
+        kind: "v2"
+      }));
+      return pairs;
+    }
+
+    function buildResearch(data) {
+      const ctx = contextText(data);
+      const pairs = specificPairs(data);
+      const result = {
+        title: "",
+        generalObjective: "",
+        specificObjectives: [],
+        generalQuestion: "",
+        specificQuestions: [],
+        generalHypothesis: null,
+        specificHypotheses: [],
+        hypothesisNote: ""
+      };
+
+      if (data.scope === "descriptivo") {
+        result.title = data.variable1 + " y " + data.variable2 + ctx;
+        result.generalObjective = "Describir " + data.variable1 + " y " + data.variable2 + ctx + ".";
+        result.generalQuestion = "¿Cómo se caracterizan " + data.variable1 + " y " + data.variable2 + ctx + "?";
+        result.specificObjectives = [
+          ...data.dimensions1.map(d => "Describir " + d + " de " + data.variable1 + ctx + "."),
+          ...data.dimensions2.map(d => "Describir " + d + " de " + data.variable2 + ctx + ".")
+        ];
+        result.specificQuestions = [
+          ...data.dimensions1.map(d => "¿Cómo se caracteriza " + d + " de " + data.variable1 + ctx + "?"),
+          ...data.dimensions2.map(d => "¿Cómo se caracteriza " + d + " de " + data.variable2 + ctx + "?")
+        ];
+        result.hypothesisNote = data.author === "villanueva"
+          ? "No se genera una hipótesis automáticamente. Villanueva señala que, si se establecen hipótesis en estudios descriptivos, estas también son descriptivas (p. 67 del PDF; p. 62 de la numeración impresa). Evalúa con tu asesor si tu estudio requiere formular una hipótesis descriptiva."
+          : "No se formula hipótesis por defecto porque el estudio descriptivo planteado busca caracterizar las variables y no contrastar una relación o explicación entre ellas.";
+      } else if (data.scope === "correlacional") {
+        const direction = relationWords(data.relation, data.scope);
+        result.title = "Relación entre " + data.variable1 + " y " + data.variable2 + ctx;
+        result.generalObjective = "Determinar la relación entre " + data.variable1 + " y " + data.variable2 + ctx + ".";
+        result.generalQuestion = "¿Qué relación existe entre " + data.variable1 + " y " + data.variable2 + ctx + "?";
+        result.specificObjectives = pairs.map(p =>
+          "Determinar la relación entre " + p.left + " y " + p.right + ctx + "."
+        );
+        result.specificQuestions = pairs.map(p =>
+          "¿Qué relación existe entre " + p.left + " y " + p.right + ctx + "?"
+        );
+        result.generalHypothesis = data.relation === "no_direccional"
+          ? "Existe una relación " + direction + " entre " + data.variable1 + " y " + data.variable2 + ctx + "."
+          : "Existe una relación " + direction + " entre " + data.variable1 + " y " + data.variable2 + ctx + ".";
+        result.specificHypotheses = pairs.map(p =>
+          data.relation === "no_direccional"
+            ? "Existe una relación estadísticamente significativa entre " + p.left + " y " + p.right + ctx + "."
+            : "Existe una relación " + direction + " entre " + p.left + " y " + p.right + ctx + "."
+        );
+        result.hypothesisNote = "Las hipótesis correlacionales expresan asociación. La dirección positiva o negativa debe estar respaldada por antecedentes y teoría; no equivale a causalidad.";
+      } else {
+        const direction = relationWords(data.relation, data.scope);
+        result.title = "Influencia de " + data.variable1 + " en " + data.variable2 + ctx;
+        result.generalObjective = "Analizar la influencia de " + data.variable1 + " en " + data.variable2 + ctx + ".";
+        result.generalQuestion = "¿De qué manera influye " + data.variable1 + " en " + data.variable2 + ctx + "?";
+        result.specificObjectives = pairs.map(p => {
+          if (p.kind === "v1") {
+            return "Analizar la influencia de " + p.left + " en " + data.variable2 + ctx + ".";
+          }
+          return "Analizar la influencia de " + data.variable1 + " en " + p.right + ctx + ".";
+        });
+        result.specificQuestions = pairs.map(p => {
+          if (p.kind === "v1") {
+            return "¿De qué manera influye " + p.left + " en " + data.variable2 + ctx + "?";
+          }
+          return "¿De qué manera influye " + data.variable1 + " en " + p.right + ctx + "?";
+        });
+        result.generalHypothesis = data.relation === "no_direccional"
+          ? data.variable1 + " influye significativamente en " + data.variable2 + ctx + "."
+          : data.variable1 + " influye " + direction + " en " + data.variable2 + ctx + ".";
+        result.specificHypotheses = pairs.map(p => {
+          const subject = p.kind === "v1"
+            ? p.left + " influye " + (data.relation === "no_direccional" ? "significativamente" : direction) + " en " + data.variable2
+            : data.variable1 + " influye " + (data.relation === "no_direccional" ? "significativamente" : direction) + " en " + p.right;
+          return subject + ctx + ".";
+        });
+        result.hypothesisNote = "La formulación explicativa utiliza lenguaje de influencia. La posibilidad de interpretar causalmente los resultados depende del diseño, la temporalidad, el control de variables y la justificación teórica.";
+      }
+      return result;
+    }
+
+    function validate() {
+      const errors = [];
+      const v1 = clean($("#variable1").value);
+      const v2 = clean($("#variable2").value);
+      const d1 = readDimensions(1);
+      const d2 = readDimensions(2);
+      const population = clean($("#population").value);
+      const institution = clean($("#institution").value);
+      const place = clean($("#place").value);
+      const year = clean($("#year").value);
+
+      if (!v1) errors.push("Ingresa el nombre de la primera variable.");
+      if (!v2) errors.push("Ingresa el nombre de la segunda variable.");
+      if (v1 && v2 && v1.toLocaleLowerCase() === v2.toLocaleLowerCase()) errors.push("Las dos variables deben tener nombres diferentes.");
+      if (d1.length === 0) errors.push("Ingresa al menos una dimensión para la variable 1.");
+      if (d2.length === 0) errors.push("Ingresa al menos una dimensión para la variable 2.");
+      if (!population) errors.push("Ingresa la población de estudio.");
+      if (!institution) errors.push("Ingresa la institución u organización.");
+      if (!place) errors.push("Ingresa el lugar de investigación.");
+      if (!/^(20\d{2}|2100)$/.test(year)) errors.push("Ingresa un año válido de cuatro cifras, entre 2000 y 2100.");
+
+      const duplicated = list => new Set(list.map(d => d.toLocaleLowerCase())).size !== list.length;
+      if (duplicated(d1) || duplicated(d2)) errors.push("Hay dimensiones repetidas dentro de una misma variable. Verifica que cada dimensión esté correctamente diferenciada.");
+
+      return {
+        errors,
+        data: {
+          variable1: v1, variable2: v2, dimensions1: d1, dimensions2: d2,
+          population, institution, place, year, scope: $("#scope").value,
+          author: $("#methodAuthor").value,
+          relation: $("#relation").value
+        }
+      };
+    }
+
+    function createResultCard(title, content, key, isList = false) {
+      const card = document.createElement("article");
+      card.className = "card result-card";
+      const header = document.createElement("div");
+      header.className = "result-header";
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      const copy = document.createElement("button");
+      copy.type = "button";
+      copy.className = "copy-button";
+      copy.textContent = "Copiar";
+      copy.addEventListener("click", () => copyText(Array.isArray(content) ? content.map((v,i) => (i+1)+". "+v).join("\n") : content));
+      header.append(heading, copy);
+      card.append(header);
+
+      if (isList) {
+        const list = document.createElement("ol");
+        list.className = "result-list";
+        content.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+        card.appendChild(list);
+      } else {
+        const p = document.createElement("p");
+        p.className = "result-text";
+        p.textContent = content;
+        card.appendChild(p);
+      }
+      return card;
+    }
+
+    function renderResults(data, result) {
+      const container = $("#resultContent");
+      container.innerHTML = "";
+      container.append(
+        createResultCard("1. Título de investigación", result.title, "title"),
+        createResultCard("2. Objetivo general", result.generalObjective, "generalObjective"),
+        createResultCard("3. Objetivos específicos", result.specificObjectives, "specificObjectives", true),
+        createResultCard("4. Pregunta general", result.generalQuestion, "generalQuestion"),
+        createResultCard("5. Preguntas específicas", result.specificQuestions, "specificQuestions", true)
+      );
+
+      if (result.generalHypothesis) {
+        container.append(
+          createResultCard("6. Hipótesis general", result.generalHypothesis, "generalHypothesis"),
+          createResultCard("7. Hipótesis específicas", result.specificHypotheses, "specificHypotheses", true)
+        );
+      } else {
+        const card = document.createElement("article");
+        card.className = "card result-card";
+        const h = document.createElement("h3");
+        h.textContent = "6 y 7. Hipótesis";
+        const p = document.createElement("p");
+        p.className = "hypothesis-note";
+        p.textContent = result.hypothesisNote;
+        card.append(h, p);
+        container.appendChild(card);
+      }
+      container.append(createResultCard("8. Sustento metodológico y referencia", methodologicalSupport(data), "methodology"));
+      [...container.children].forEach((card, index) => { card.style.animationDelay = (index * 65) + "ms"; });
+      state.generated = { data, result };
+      $("#results").style.display = "block";
+    }
+
+    function allResultsText() {
+      if (!state.generated) return "";
+      const r = state.generated.result;
+      const sections = [
+        ["TÍTULO DE INVESTIGACIÓN", r.title],
+        ["OBJETIVO GENERAL", r.generalObjective],
+        ["OBJETIVOS ESPECÍFICOS", r.specificObjectives.map((v,i) => (i+1)+". "+v).join("\n")],
+        ["PREGUNTA GENERAL", r.generalQuestion],
+        ["PREGUNTAS ESPECÍFICAS", r.specificQuestions.map((v,i) => (i+1)+". "+v).join("\n")]
+      ];
+      if (r.generalHypothesis) {
+        sections.push(
+          ["HIPÓTESIS GENERAL", r.generalHypothesis],
+          ["HIPÓTESIS ESPECÍFICAS", r.specificHypotheses.map((v,i) => (i+1)+". "+v).join("\n")]
+        );
+      } else {
+        sections.push(["HIPÓTESIS", r.hypothesisNote]);
+      }
+      sections.push(["SUSTENTO METODOLÓGICO Y REFERENCIA", methodologicalSupport(state.generated.data)]);
+      return sections.map(([heading, body]) => heading + "\n" + body).join("\n\n");
+    }
+
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const area = document.createElement("textarea");
+          area.value = text;
+          area.style.position = "fixed";
+          area.style.opacity = "0";
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand("copy");
+          area.remove();
+        }
+        showToast("Texto copiado al portapapeles.");
+      } catch (error) {
+        showToast("No se pudo copiar automáticamente. Selecciona y copia el texto.");
+      }
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.style.display = "none", 2600);
+    }
+
+    function xmlEscape(text) {
+      return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+    }
+
+    function wordParagraph(text, style = "Normal") {
+      return `<w:p><w:pPr><w:pStyle w:val="${style}"/></w:pPr><w:r><w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r></w:p>`;
+    }
+
+    async function downloadDocx() {
+      if (!state.generated) return;
+      if (typeof JSZip === "undefined") {
+        alert("No se pudo cargar JSZip. Conéctate a internet y vuelve a intentarlo. También puedes copiar los resultados.");
+        return;
+      }
+
+      const { data, result } = state.generated;
+      const zip = new JSZip();
+      const paragraphs = [];
+      paragraphs.push(wordParagraph("GENERADOR ACADÉMICO DE INVESTIGACIÓN", "Title"));
+      paragraphs.push(wordParagraph("Escuela Profesional de Administración – UNASAM", "Subtitle"));
+      paragraphs.push(wordParagraph("DATOS DEL ESTUDIO", "Heading1"));
+      paragraphs.push(wordParagraph("Variable 1: " + data.variable1));
+      paragraphs.push(wordParagraph("Dimensiones: " + data.dimensions1.join("; ")));
+      paragraphs.push(wordParagraph("Variable 2: " + data.variable2));
+      paragraphs.push(wordParagraph("Dimensiones: " + data.dimensions2.join("; ")));
+      paragraphs.push(wordParagraph("Población: " + data.population));
+      paragraphs.push(wordParagraph("Institución: " + data.institution));
+      paragraphs.push(wordParagraph("Lugar: " + data.place));
+      paragraphs.push(wordParagraph("Año: " + data.year));
+      paragraphs.push(wordParagraph("Clasificación metodológica: " + methodologicalAuthors[data.author].labels[data.scope]));
+      paragraphs.push(wordParagraph("RESULTADOS", "Heading1"));
+
+      function addSection(title, content, list = false) {
+        paragraphs.push(wordParagraph(title, "Heading2"));
+        if (Array.isArray(content)) {
+          content.forEach((item, index) => paragraphs.push(wordParagraph((list ? (index + 1) + ". " : "") + item)));
+        } else {
+          paragraphs.push(wordParagraph(content));
+        }
+      }
+
+      addSection("Sustento metodológico y referencia", methodologicalSupport(data));
+      addSection("1. Título de investigación", result.title);
+      addSection("2. Objetivo general", result.generalObjective);
+      addSection("3. Objetivos específicos", result.specificObjectives, true);
+      addSection("4. Pregunta general", result.generalQuestion);
+      addSection("5. Preguntas específicas", result.specificQuestions, true);
+      if (result.generalHypothesis) {
+        addSection("6. Hipótesis general", result.generalHypothesis);
+        addSection("7. Hipótesis específicas", result.specificHypotheses, true);
+      } else {
+        addSection("6 y 7. Hipótesis", result.hypothesisNote);
+      }
+      paragraphs.push(wordParagraph("NOTA METODOLÓGICA", "Heading1"));
+      paragraphs.push(wordParagraph("Documento preliminar generado con criterios metodológicos generales. Verificar la coherencia con el diseño de investigación, la matriz de consistencia y las directivas vigentes de la UNASAM."));
+
+      const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+        <w:body>${paragraphs.join("")}
+          <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr>
+        </w:body>
+      </w:document>`;
+
+      const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+        <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/></w:rPr><w:pPr><w:spacing w:after="140"/></w:pPr></w:style>
+        <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:rPr><w:b/><w:color w:val="102B4E"/><w:sz w:val="34"/></w:rPr><w:pPr><w:jc w:val="center"/><w:spacing w:after="200"/></w:pPr></w:style>
+        <w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:basedOn w:val="Normal"/><w:rPr><w:color w:val="246EAE"/><w:sz w:val="22"/></w:rPr><w:pPr><w:jc w:val="center"/><w:spacing w:after="320"/></w:pPr></w:style>
+        <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:uiPriority w:val="9"/><w:qFormat/><w:rPr><w:b/><w:color w:val="102B4E"/><w:sz w:val="28"/></w:rPr><w:pPr><w:keepNext/><w:spacing w:before="260" w:after="120"/></w:pPr></w:style>
+        <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:uiPriority w:val="9"/><w:qFormat/><w:rPr><w:b/><w:color w:val="174F88"/><w:sz w:val="24"/></w:rPr><w:pPr><w:keepNext/><w:spacing w:before="180" w:after="80"/></w:pPr></w:style>
+      </w:styles>`;
+
+      zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+          <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+          <Default Extension="xml" ContentType="application/xml"/>
+          <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+          <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+        </Types>`);
+      zip.folder("_rels").file(".rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+        </Relationships>`);
+      zip.folder("word").file("document.xml", documentXml);
+      zip.folder("word").file("styles.xml", stylesXml);
+      zip.folder("word").folder("_rels").file("document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          <Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+        </Relationships>`);
+
+      const blob = await zip.generateAsync({
+        type: "blob",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Investigacion_UNASAM_" + data.year + ".docx";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Documento Word generado.");
+    }
+
+    initializeTheme();
+
+    document.querySelectorAll("[data-add]").forEach(button => {
+      button.addEventListener("click", () => addDimension(button.dataset.add));
+    });
+
+    const administrationExamples = [
+  {
+    "area": "Marketing",
+    "variable1": "marketing digital",
+    "variable2": "decisión de compra",
+    "dimensions": [
+      [
+        "marketing de contenidos",
+        "publicidad digital",
+        "interacción en redes sociales"
+      ],
+      [
+        "búsqueda de información",
+        "evaluación de alternativas",
+        "elección de compra"
+      ]
+    ],
+    "population": "los clientes",
+    "institution": "la empresa Comercial Andina S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Marketing",
+    "variable1": "calidad del servicio",
+    "variable2": "fidelización del cliente",
+    "dimensions": [
+      [
+        "fiabilidad",
+        "capacidad de respuesta",
+        "empatía"
+      ],
+      [
+        "intención de recompra",
+        "recomendación",
+        "preferencia de marca"
+      ]
+    ],
+    "population": "los clientes",
+    "institution": "la empresa Comercial Andina S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Marketing",
+    "variable1": "imagen de marca",
+    "variable2": "confianza del consumidor",
+    "dimensions": [
+      [
+        "notoriedad",
+        "asociaciones de marca",
+        "calidad percibida"
+      ],
+      [
+        "credibilidad",
+        "integridad percibida",
+        "benevolencia percibida"
+      ]
+    ],
+    "population": "los clientes",
+    "institution": "la empresa Comercial Andina S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Recursos Humanos",
+    "variable1": "gestión del talento humano",
+    "variable2": "desempeño laboral",
+    "dimensions": [
+      [
+        "selección de personal",
+        "capacitación",
+        "compensación"
+      ],
+      [
+        "cumplimiento de tareas",
+        "calidad del trabajo",
+        "trabajo en equipo"
+      ]
+    ],
+    "population": "los trabajadores",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Recursos Humanos",
+    "variable1": "clima organizacional",
+    "variable2": "satisfacción laboral",
+    "dimensions": [
+      [
+        "comunicación interna",
+        "liderazgo",
+        "relaciones interpersonales"
+      ],
+      [
+        "satisfacción con las tareas",
+        "satisfacción con la remuneración",
+        "satisfacción con las condiciones laborales"
+      ]
+    ],
+    "population": "los trabajadores",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Recursos Humanos",
+    "variable1": "estrés laboral",
+    "variable2": "compromiso organizacional",
+    "dimensions": [
+      [
+        "sobrecarga de trabajo",
+        "conflicto de rol",
+        "ambigüedad de rol"
+      ],
+      [
+        "compromiso afectivo",
+        "compromiso de continuidad",
+        "compromiso normativo"
+      ]
+    ],
+    "population": "los trabajadores",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "negativa"
+  },
+  {
+    "area": "Finanzas",
+    "variable1": "gestión financiera",
+    "variable2": "rentabilidad empresarial",
+    "dimensions": [
+      [
+        "planificación financiera",
+        "control financiero",
+        "decisiones de inversión"
+      ],
+      [
+        "rentabilidad sobre activos",
+        "rentabilidad sobre patrimonio",
+        "margen neto"
+      ]
+    ],
+    "population": "las microempresas comerciales",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Finanzas",
+    "variable1": "gestión del capital de trabajo",
+    "variable2": "liquidez empresarial",
+    "dimensions": [
+      [
+        "gestión de efectivo",
+        "gestión de cuentas por cobrar",
+        "gestión de inventarios"
+      ],
+      [
+        "liquidez corriente",
+        "liquidez inmediata",
+        "liquidez absoluta"
+      ]
+    ],
+    "population": "las microempresas comerciales",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Finanzas",
+    "variable1": "educación financiera",
+    "variable2": "comportamiento financiero",
+    "dimensions": [
+      [
+        "conocimientos financieros",
+        "actitudes financieras",
+        "habilidades financieras"
+      ],
+      [
+        "elaboración de presupuestos",
+        "hábitos de ahorro",
+        "manejo del endeudamiento"
+      ]
+    ],
+    "population": "los propietarios de microempresas",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Logística",
+    "variable1": "gestión de inventarios",
+    "variable2": "eficiencia logística",
+    "dimensions": [
+      [
+        "planificación de existencias",
+        "control de existencias",
+        "reposición de existencias"
+      ],
+      [
+        "uso de recursos",
+        "cumplimiento de plazos",
+        "control de costos logísticos"
+      ]
+    ],
+    "population": "los trabajadores del área de logística",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Logística",
+    "variable1": "gestión de proveedores",
+    "variable2": "calidad del abastecimiento",
+    "dimensions": [
+      [
+        "selección de proveedores",
+        "evaluación de proveedores",
+        "desarrollo de proveedores"
+      ],
+      [
+        "conformidad de insumos",
+        "oportunidad de entrega",
+        "integridad de pedidos"
+      ]
+    ],
+    "population": "los trabajadores del área de logística",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Logística",
+    "variable1": "gestión de almacenes",
+    "variable2": "desempeño de la distribución",
+    "dimensions": [
+      [
+        "recepción de mercancías",
+        "almacenamiento",
+        "preparación de pedidos"
+      ],
+      [
+        "puntualidad de entregas",
+        "exactitud de entregas",
+        "conservación de productos"
+      ]
+    ],
+    "population": "los trabajadores del área de logística",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión estratégica",
+    "variable1": "planificación estratégica",
+    "variable2": "competitividad empresarial",
+    "dimensions": [
+      [
+        "diagnóstico estratégico",
+        "formulación estratégica",
+        "seguimiento estratégico"
+      ],
+      [
+        "eficiencia de costos",
+        "diferenciación",
+        "capacidad de respuesta al mercado"
+      ]
+    ],
+    "population": "las pequeñas empresas",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión estratégica",
+    "variable1": "liderazgo estratégico",
+    "variable2": "innovación organizacional",
+    "dimensions": [
+      [
+        "visión compartida",
+        "toma de decisiones",
+        "orientación al cambio"
+      ],
+      [
+        "innovación de procesos",
+        "innovación de productos",
+        "innovación de métodos de gestión"
+      ]
+    ],
+    "population": "las pequeñas empresas",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión estratégica",
+    "variable1": "cultura organizacional",
+    "variable2": "gestión del cambio",
+    "dimensions": [
+      [
+        "valores compartidos",
+        "normas organizacionales",
+        "prácticas organizacionales"
+      ],
+      [
+        "preparación para el cambio",
+        "implementación del cambio",
+        "consolidación del cambio"
+      ]
+    ],
+    "population": "las pequeñas empresas",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Emprendimiento",
+    "variable1": "competencias emprendedoras",
+    "variable2": "intención emprendedora",
+    "dimensions": [
+      [
+        "identificación de oportunidades",
+        "creatividad",
+        "asunción de riesgos calculados"
+      ],
+      [
+        "deseo de emprender",
+        "planificación del emprendimiento",
+        "compromiso de emprender"
+      ]
+    ],
+    "population": "los estudiantes de Administración",
+    "institution": "el instituto ficticio Formación Andina",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Emprendimiento",
+    "variable1": "orientación emprendedora",
+    "variable2": "desempeño empresarial",
+    "dimensions": [
+      [
+        "innovación",
+        "proactividad",
+        "asunción de riesgos"
+      ],
+      [
+        "crecimiento de ventas",
+        "crecimiento del empleo",
+        "cumplimiento de metas empresariales"
+      ]
+    ],
+    "population": "los emprendimientos",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Emprendimiento",
+    "variable1": "redes de apoyo empresarial",
+    "variable2": "desarrollo del emprendimiento",
+    "dimensions": [
+      [
+        "apoyo informativo",
+        "apoyo técnico",
+        "apoyo comercial"
+      ],
+      [
+        "formalización",
+        "consolidación operativa",
+        "expansión comercial"
+      ]
+    ],
+    "population": "los emprendimientos",
+    "institution": "la asociación empresarial Emprende Áncash",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión pública",
+    "variable1": "gestión administrativa",
+    "variable2": "calidad de atención al ciudadano",
+    "dimensions": [
+      [
+        "planificación",
+        "organización",
+        "control"
+      ],
+      [
+        "accesibilidad",
+        "oportunidad de atención",
+        "claridad de información"
+      ]
+    ],
+    "population": "los usuarios",
+    "institution": "la municipalidad ficticia de Valle Andino",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión pública",
+    "variable1": "transparencia institucional",
+    "variable2": "confianza ciudadana",
+    "dimensions": [
+      [
+        "acceso a información",
+        "rendición de cuentas",
+        "claridad de información pública"
+      ],
+      [
+        "competencia percibida",
+        "integridad percibida",
+        "orientación al ciudadano"
+      ]
+    ],
+    "population": "los usuarios",
+    "institution": "la municipalidad ficticia de Valle Andino",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Gestión pública",
+    "variable1": "simplificación administrativa",
+    "variable2": "satisfacción del usuario",
+    "dimensions": [
+      [
+        "reducción de requisitos",
+        "reducción de etapas",
+        "digitalización de trámites"
+      ],
+      [
+        "satisfacción con los plazos",
+        "satisfacción con el trato",
+        "satisfacción con el resultado"
+      ]
+    ],
+    "population": "los usuarios",
+    "institution": "la municipalidad ficticia de Valle Andino",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Operaciones y calidad",
+    "variable1": "gestión de la calidad",
+    "variable2": "productividad",
+    "dimensions": [
+      [
+        "enfoque al cliente",
+        "gestión de procesos",
+        "mejora continua"
+      ],
+      [
+        "productividad laboral",
+        "productividad de materiales",
+        "productividad de equipos"
+      ]
+    ],
+    "population": "los trabajadores del área de operaciones",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Operaciones y calidad",
+    "variable1": "mejora continua",
+    "variable2": "desempeño operativo",
+    "dimensions": [
+      [
+        "identificación de problemas",
+        "implementación de mejoras",
+        "evaluación de mejoras"
+      ],
+      [
+        "calidad operativa",
+        "tiempos de proceso",
+        "eficiencia de recursos"
+      ]
+    ],
+    "population": "los trabajadores del área de operaciones",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  },
+  {
+    "area": "Operaciones y calidad",
+    "variable1": "transformación digital",
+    "variable2": "eficiencia administrativa",
+    "dimensions": [
+      [
+        "adopción tecnológica",
+        "competencias digitales",
+        "integración de sistemas"
+      ],
+      [
+        "tiempos de atención",
+        "uso de recursos",
+        "exactitud de registros"
+      ]
+    ],
+    "population": "los trabajadores del área de operaciones",
+    "institution": "la empresa Servicios Andinos S.A.C.",
+    "place": "Huaraz, Áncash",
+    "year": "2026",
+    "scope": "correlacional",
+    "relation": "positiva"
+  }
+];
+
+    function updateExampleTopics() {
+      const topic = $("#exampleTopic");
+      topic.replaceChildren();
+      administrationExamples.forEach((example, index) => {
+        if (example.area !== $("#exampleArea").value) return;
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = example.variable1 + " y " + example.variable2;
+        topic.appendChild(option);
+      });
+    }
+    [...new Set(administrationExamples.map(example => example.area))].forEach(area => {
+      const option = document.createElement("option");
+      option.value = area;
+      option.textContent = area;
+      $("#exampleArea").appendChild(option);
+    });
+    $("#exampleArea").addEventListener("change", updateExampleTopics);
+    updateExampleTopics();
+
+    $("#fillExampleButton").addEventListener("click", () => {
+      const { area, dimensions, ...example } = administrationExamples[Number($("#exampleTopic").value)];
+      Object.entries(example).forEach(([id, value]) => {
+        $("#" + id).value = value;
+      });
+      dimensions.forEach((items, index) => {
+        $("#dimensions" + (index + 1)).replaceChildren();
+        items.forEach(value => addDimension(index + 1, value));
+      });
+      $("#errors").innerHTML = "";
+      $("#errors").style.display = "none";
+      $("#results").style.display = "none";
+      $("#resultContent").innerHTML = "";
+      state.generated = null;
+      setScopeHelp();
+      showToast("Ejemplo completo cargado. Puedes editarlo y pulsar Generar investigación.");
+    });
+
+    function invalidateMethodResults() {
+      state.generated = null;
+      $("#results").style.display = "none";
+      $("#resultContent").innerHTML = "";
+      setScopeHelp();
+    }
+    $("#methodAuthor").addEventListener("change", invalidateMethodResults);
+    $("#scope").addEventListener("change", invalidateMethodResults);
+
+    $("#researchForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const { errors, data } = validate();
+      const errorBox = $("#errors");
+      if (errors.length) {
+        errorBox.innerHTML = "<strong>Revisa lo siguiente:</strong><ul>" + errors.map(e => "<li>" + e.replace(/</g, "&lt;") + "</li>").join("") + "</ul>";
+        errorBox.style.display = "block";
+        $("#results").style.display = "none";
+        errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      errorBox.style.display = "none";
+      const result = buildResearch(data);
+      renderResults(data, result);
+      $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    $("#copyAll").addEventListener("click", () => copyText(allResultsText()));
+    $("#downloadWord").addEventListener("click", downloadDocx);
+
+    $("#resetButton").addEventListener("click", () => {
+      if (!confirm("¿Deseas limpiar todos los campos y resultados?")) return;
+      $("#researchForm").reset();
+      updateExampleTopics();
+      $("#dimensions1").innerHTML = "";
+      $("#dimensions2").innerHTML = "";
+      for (let i = 0; i < 3; i++) {
+        addDimension(1);
+        addDimension(2);
+      }
+      $("#errors").style.display = "none";
+      $("#results").style.display = "none";
+      state.generated = null;
+      setScopeHelp();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Inicialización: tres espacios de dimensiones por variable, editables y eliminables.
+    for (let i = 0; i < 3; i++) {
+      addDimension(1);
+      addDimension(2);
+    }
+    setScopeHelp();
+  </script>
+</body>
+</html>
